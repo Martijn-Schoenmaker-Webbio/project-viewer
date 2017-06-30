@@ -173,14 +173,8 @@ function changeFold() {
   function getCurrentUri()
      {
          $actual_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-         $final_slash = substr($actual_link, strrpos($actual_link, '/') + 1);
-         if ($final_slash === "") {
-           var_dump("empty");
-         }
          $imageUrl = substr($actual_link, strrpos($actual_link, '=') + 1);
-         //var_dump($imageUrl);
          return $imageUrl;
-
      }
 
   foreach(getFileList(".") as $file) {
@@ -192,9 +186,14 @@ function changeFold() {
   sort($imageNames);
   for ($i=0; $i < count($imageNames); $i++) {
     $spacialize = str_replace("./", "", $imageNames[$i]);
-    $removepng = str_replace(".png", "", $spacialize);
+    $removepng = preg_replace("/\..+/", "", $spacialize);
     if ($imageNames[$i] == getCurrentUri()) {
       $div .= "<li class='activeLink'><a href='?screen=". urlencode($spacialize) ."'>" . $removepng . "</a></li>";
+      if(preg_match("/\.mp4|mov|webm|ogg$/", $imageNames[$i])){
+        $isVideo = true;
+      }else{
+        //$isVideo = false;
+      }
     }else {
       $div .= "<li><a href='?screen=". urlencode($spacialize) ."'>" . $removepng . "</a></li>";
     }
